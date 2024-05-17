@@ -1,0 +1,79 @@
+
+#####
+##### .bashrc / profile
+#####
+
+# Terminal
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+export AWS_PROFILE="dev"
+
+function proml
+{
+PS1="[$(date +%D)-$(date +%H):$(date +%M)]\[\033[4;37m\]NAME_OF_BOX@HOST_NAME\[\033[0m\]:\[\033[1;31m\]\w\[\033[0m\]$ "
+PS2='> '
+PS4='+ '
+}
+proml
+
+source ~/.bash_aliases
+
+# Prints current Conda environment on Ec2
+echo -e "\033[1;31mConda environment is\033[0;34m"
+conda info --envs | grep -F "*"
+
+# Prints current screens, opened with jup
+echo -e "\033[1;31mActive Screens\033[0;34m"
+screen -ls
+
+# URL Reminder for Jupyter
+echo -e "\033[1;31mConnect to Jupyter with"
+echo -e "\033[0;34m"IP HERE"\033[0m"
+
+#####
+##### .bash_aliases
+#####
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias fileNum='ls -1 | wc -l'
+alias dirSize='du -sh ./*/'
+alias fileSize='ls -lSh | grep -v '^d''
+alias freeSpace='df -kh "$PWD"'
+alias fcount='ls | wc -l'
+alias l='tree -C -L 1 -D -t -s -h -a -p -u -g | tail'
+alias ll='tree -C -L 1 -D -t -s -h -a -p -u -g'
+alias ld='tree -d -C -L 2 -D -t'
+alias lf='tree -C -L 2 -D -t'
+alias rm_ds='find ./* -name '.DS_Store' -type f -delete'
+alias rm_space="find . -depth -name '* *' -execdir bash -c 'for i; do mv "$i" "${i// /_}"; done' _ {} +"
+alias gpu="watch -n .1 nvidia-smi"
+alias gbranch='git rev-parse --abbrev-ref HEAD'
+alias condaenv='conda env list'
+alias s_kill="killall screen"
+alias PAT='cat ~/.keys/.gitPAT'
+
+#####
+##### AWS Helpers
+#####
+
+aws ec2 describe-instances > ~/.instances.txt
+aws_ip=$(cat ~/.instances.txt | grep -B 27 "SEARCH_STRING" | grep PublicDnsName | grep -o '".*"' | sed 's/"//g' | awk  -F ' ' '{print $2}')
+alias log_EXAMPLE_AWS="ssh -i "PEM" ubuntu@"$aws_ip""
+
+#####
+##### Jupyter notebook
+#####
+
+alias sjup="screen -S Jupyter"
+alias logJup_dev="ssh -i "PEM" -L 5511:127.0.0.1:8888 ubuntu@"$aws_ip_dev""
+alias jup='open http://127.0.0.1:5511'
+convert_notebook(){
+jupyter nbconvert --to script $1
+}
+
+
+
+
+
